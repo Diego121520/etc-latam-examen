@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { createTask } from '../client/taskClient';
 import AvatarEditor from 'react-avatar-editor';
 
@@ -15,9 +15,9 @@ export default function CreateTaskComponent() {
 		const body = {
 			title: event.target.title.value,
 			description: event.target.description.value,
-			status: 'PENDING', // Ajusta el estado según tus necesidades
-			userId: 8, // Ajusta userId según necesites
-			image: croppedImage, // Asocia la imagen recortada a la tarea
+			status: 'PENDING',
+			userId: 8,
+			image: croppedImage,
 		};
 
 		try {
@@ -45,7 +45,6 @@ export default function CreateTaskComponent() {
 				setImage(reader.result);
 			};
 			reader.readAsDataURL(file);
-			console.log("ACAA " + reader.result)
 		}
 	};
 
@@ -107,9 +106,9 @@ export default function CreateTaskComponent() {
 								width={250}
 								height={250}
 								border={50}
-								color={[255, 255, 255, 0.6]} // Color del fondo del editor
-								scale={1.2} // Escala máxima del zoom
-								rotate={0} // Rotación inicial
+								color={[255, 255, 255, 0.6]}
+								scale={1.2}
+								rotate={0}
 							/>
 							<button type="button" className="btn btn-primary mt-3" onClick={handleImageCrop}>
 								Recortar imagen

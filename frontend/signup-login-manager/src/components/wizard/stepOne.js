@@ -5,7 +5,6 @@ const StepOne = () => {
         <div className="step">
             <h2>Paso 1</h2>
             <p>Crea un usuario para tu cuenta</p>
-            {/* Add your form fields or content here */}
         </div>
     );
 };

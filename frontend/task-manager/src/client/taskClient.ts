@@ -21,7 +21,7 @@ export const createTask = async (body) => {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(body),
+			body: body,
 		});
 
 		if(response.ok) {

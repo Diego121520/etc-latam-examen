@@ -8,6 +8,7 @@ CREATE TABLE "Users"(
 );
 ALTER TABLE
     "Users" ADD PRIMARY KEY("id");
+
 CREATE TABLE "tasks"(
     "id" BIGINT NOT NULL,
     "status" VARCHAR(255) NOT NULL,

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
+import image from '../../images/etc-latam-logo.png';
 export default function LoginComponent(props) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -40,15 +40,12 @@ export default function LoginComponent(props) {
         setModalVisible(false);
     };
 
-    const redirectModal = () => {
-        window.location.href = "/login"
-    }
-
 
     return (
         <div className="d-flex align-items-center justify-content-center vh-100">
             <div className="mx-auto" style={{ maxWidth: '400px' }}>
                 <div className="text-center mb-4">
+                    <img className="mb-2" src={image}/>
                     <h1 className="display-4">Iniciar sesión</h1>
                 </div>
                 <form onSubmit={handleSubmit}>

@@ -1,4 +1,4 @@
-import {getAllTaskByUserId, updateTask} from '../client/taskClient';
+import {getAllTaskByUserId} from '../client/taskClient';
 import {useEffect, useState} from "react";
 import UpdateTaskComponent from "../components/update-task-component";
 
@@ -14,6 +14,8 @@ export default function TaskComponent() {
 	const [modalMessage, setModalMessage] = useState('');
 
 	const handleGetAllTaskByUserId = async (userId) => {
+		setModalVisible(false);
+
 		try {
 			const updatedTask = await getAllTaskByUserId(userId);
 
@@ -21,7 +23,8 @@ export default function TaskComponent() {
 				setTasks(updatedTask);
 			}
 		} catch (error) {
-			console.error('Error al actualizar el título de la tarea:', error);
+			setModalVisible(true);
+			setModalMessage("Hubo un error al obtener las tareas");
 		}
 	};
 
@@ -53,7 +56,7 @@ export default function TaskComponent() {
 										</li>
 									)
 								}
-							}):""}
+							}):(<h3>Sin tareas</h3>)}
 						</ul>
 					</div>
 					<div className="col-md-4 mb-4 text-center">
@@ -71,7 +74,7 @@ export default function TaskComponent() {
 										</li>
 									)
 								}
-							}):""}
+							}):(<h3>Sin tareas</h3>)}
 						</ul>
 					</div>
 					<div className="col-md-4 mb-4 text-center">
@@ -89,7 +92,7 @@ export default function TaskComponent() {
 										</li>
 									)
 								}
-							}):""}
+							}):(<h3>Sin tareas</h3>)}
 						</ul>
 					</div>
 				</div>
@@ -106,7 +109,7 @@ export default function TaskComponent() {
 							<p>{modalMessage}</p>
 						</div>
 						<div className="modal-footer">
-							<button className="btn btn-success" >Aceptar</button>
+							<button className="btn btn-dark" onClick={handleGetAllTaskByUserId}>Reintentar</button>
 						</div>
 					</div>
 				</div>

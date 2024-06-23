@@ -3,7 +3,7 @@
 ## Tecnologías Utilizadas
 
 - Java: 21
-- quarkus: 1.0.0
+- quarkus: 3.11.1
 - react: 17.0.2
 - postgresql
 - kong

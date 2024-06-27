@@ -18,7 +18,7 @@
     This CSP allows any SSL-enabled host and for arbitrary eval(), but you should limit these directives further to increase your app's security.
     Learn more about CSP policies at https://content-security-policy.com/#directive
   -->
-  <meta http-equiv="Content-Security-Policy" content="default-src *; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval';img-src * data:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src *; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval';img-src * data:;connect-src * data:;">
   <meta name="importmap-type" content="systemjs-importmap" />
   <!-- If you wish to turn off import-map-overrides for specific environments (prod), uncomment the line below -->
   <!-- More info at https://github.com/joeldenning/import-map-overrides/blob/master/docs/configuration.md#domain-list -->
@@ -53,7 +53,7 @@
         "@single-spa/welcome": "https://unpkg.com/single-spa-welcome/dist/single-spa-welcome.js",
         "@taskManagerApp/root-config": "//localhost:9000/taskManagerApp-root-config.js",
         "@taskManagerApp/signup-login-manager": "//localhost:8081/signup-login-manager-signup-login-manager.js",
-        "@taskManagerApp/task-manager": "//localhost:8082/manager-task-manager.js"
+        "@taskManagerApp/task-manager": "//localhost:8080/manager-task-manager.js"
       }
     }
   </script>

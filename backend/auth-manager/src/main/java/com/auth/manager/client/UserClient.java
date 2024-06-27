@@ -1,12 +1,9 @@
 package com.auth.manager.client;
 
 import com.auth.manager.DTO.UserLoginDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
@@ -20,18 +17,11 @@ public class UserClient {
     }
 
     public Boolean verifyUser(UserLoginDTO userLoginDTO) {
-       try {
-
-           return userRestClient.verifyUser(userLoginDTO);
-       } catch (WebApplicationException e) {
-            // Manejar la excepción
-            e.printStackTrace();
-        }
-        return null;
+        return userRestClient.verifyUser(userLoginDTO);
     }
 
     public Long getUserIdByUsername(String username) {
-        return userRestClient.getUserIdByUsername(username);
+        return userRestClient.getUserIdByUsername(username, "internal");
     }
 
     public Boolean isValidUser(Long userId) {

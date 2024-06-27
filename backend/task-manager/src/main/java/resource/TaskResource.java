@@ -1,29 +1,30 @@
 package resource;
 
 import DTO.TaskDTO;
-
 import DTO.UpdateTaskDTO;
 import entity.Task;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
+import message.SuccessMessage;
 import service.TaskService;
 
 import java.util.Base64;
 import java.util.List;
 
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 @AllArgsConstructor
 @Path("/task")
-public class TaskController {
+public class TaskResource {
 
     private final TaskService taskService;
 
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     @POST
     @Path("")
     public Response createTask(TaskDTO taskDTO) {
+
         byte[] imageBytes = new byte[0];
 
         if (taskDTO.image() != null) {
@@ -37,23 +38,28 @@ public class TaskController {
         return Response.ok().entity(taskService.createTask(taskDTO, imageBytes)).build();
     }
 
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     @GET
     @Path("/all/user/{userId}")
-    public Response getAllTaskByStatus(@PathParam("userId") Long userId) {
+    public Response getAllTaskByUserId(@PathParam("userId") Long userId) {
+
         List<Task> getAll = taskService.getAllTaskByStatus(userId);
 
         return Response.ok().entity(getAll).build();
     }
 
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     @PATCH
     @Path("/{id}")
     public Response updateTask(@PathParam("id") Long id, UpdateTaskDTO taskDTO) {
 
         return Response.ok().entity(taskService.updateTask(id, taskDTO)).build();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public Response deleteTask(@PathParam("id") Long id) {
+        taskService.deleteTask(id);
+
+        return Response.ok().entity(SuccessMessage.TASK_DELETED.getDescription()).build();
     }
 
 }

@@ -16,10 +16,11 @@ public interface UserRestClient {
 
     @GET
     @Path("/{username}")
-    Long getUserIdByUsername(@PathParam("username") String username);
+    Long getUserIdByUsername(@PathParam("username") String username,
+                             @HeaderParam("request-type") String requestType);
 
     @GET
-    @Path("/exist/{id}")
+    @Path("/exist/id/{id}")
     Boolean isValidUser(@PathParam("id") Long userId);
 
 }

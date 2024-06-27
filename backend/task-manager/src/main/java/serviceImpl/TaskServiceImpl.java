@@ -15,9 +15,7 @@ import message.ExceptionMessage;
 import repository.TaskRepository;
 import service.TaskService;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @AllArgsConstructor
 @ApplicationScoped
@@ -64,5 +62,15 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> getAllTaskByStatus(Long userId) {
         return taskRepository.getAllByStatus(userId);
+    }
+
+    @Transactional
+    @Override
+    public Boolean deleteTask(Long id) {
+        Task task = taskRepository.findById(id);
+
+        taskRepository.delete(task);
+
+        return true;
     }
 }

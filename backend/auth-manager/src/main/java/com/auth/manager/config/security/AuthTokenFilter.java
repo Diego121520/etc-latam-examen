@@ -21,8 +21,7 @@ public class AuthTokenFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext requestContext) {
         String path = requestContext.getUriInfo().getPath();
 
-        // Excluir la ruta de inicio de sesión de la validación
-        if (path.equals("/login")) {
+        if (path.equals("/auth/login")) {
             return;
         }
 
@@ -33,7 +32,7 @@ public class AuthTokenFilter implements ContainerRequestFilter {
         String authHeader = requestContext.getHeaderString("Authorization");
         String jwtToken = authHeader != null ? authHeader.substring("Bearer ".length()) : null;
 
-        // Validar los tokens (asegúrate de que los tokens sean válidos y coincidan)
+        // Validar los tokens
         if (jwtToken == null || csrfToken == null || !validateTokens(jwtToken, csrfToken)) {
             requestContext.abortWith(Response.status(Response.Status.FORBIDDEN).build());
         }
@@ -42,7 +41,7 @@ public class AuthTokenFilter implements ContainerRequestFilter {
     private boolean validateTokens(String jwtToken, String csrfToken) {
         String subject = jwtTokenService.getSubjectFromToken(jwtToken);
 
-        // Obtener el ID del usuario desde el JWT (aquí se asume que el subject es el ID del usuario)
+        // Obtener el ID del usuario desde el JWT
         String storedCsrfToken = csrfTokenService.getCsrfToken(Long.parseLong(subject));
 
         return csrfToken != null && csrfToken.equals(storedCsrfToken);

@@ -8,7 +8,7 @@ import jakarta.ws.rs.core.Response;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-@Path("/login")
+@Path("/auth")
 public class LoginResource {
 
     private final LoginServiceImpl loginService;
@@ -16,10 +16,17 @@ public class LoginResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @POST
-    @Path("")
+    @Path("/login")
     public Response doLogin(UserLoginDTO userDTO) {
 
         return loginService.doLogin(userDTO);
+    }
+
+    @POST
+    @Path("/validate-credentials")
+    public Response validateCredentials() {
+
+        return Response.ok().build();
     }
 
 }

@@ -25,3 +25,38 @@
     background-color: #0056b3;
     border-color: #0056b3;
 }
+
+.task-item {
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.task-content {
+    display: flex;
+    align-items: center;
+}
+
+.task-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+.task-image-container {
+    margin-left: 15px;
+}
+
+.task-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.task-actions {
+    display: flex;
+    align-items: center;
+}

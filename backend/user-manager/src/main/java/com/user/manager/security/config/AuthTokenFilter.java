@@ -1,6 +1,6 @@
-package config.security;
+package com.user.manager.security.config;
 
-import client.AuthClient;
+import com.user.manager.client.AuthClient;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
@@ -18,6 +18,13 @@ public class AuthTokenFilter implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
+        String path = requestContext.getUriInfo().getPath();
+        String requestType = requestContext.getHeaderString("request-type");
+
+        if("/user".equals(path) || "/user/verify".equals(path) || path.contains("exist") || "internal".equals(requestType)) {
+            return;
+        }
+
         // Obtener el token CSRF del encabezado de la solicitud
         String csrfToken = requestContext.getHeaderString("X-CSRF-Token");
 
@@ -30,6 +37,6 @@ public class AuthTokenFilter implements ContainerRequestFilter {
             return;
         }
 
-            authClient.validateCredentials(authHeader, csrfToken);
+        authClient.validateCredentials(authHeader, csrfToken);
     }
 }

@@ -1,26 +1,37 @@
-import {getAllTaskByUserId} from '../client/taskClient';
 import {useEffect, useState} from "react";
 import UpdateTaskComponent from "../components/update-task-component";
+import TaskClient from "../client/task-client";
+import '../styles/task-styles.css';
 
 export default function TaskComponent() {
 	const [tasks, setTasks] = useState([{
+		id: null,
 		title:"",
-		status:""
-	}]);
-
-	const [show, setShow] = useState(false);
-
+		status:"",
+		image : ""
+	}])
+	const [showUpdateModal, setShowUpdateModal] = useState(false);
+	const [selectedTask, setSelectedTask] = useState(null);
 	const [modalVisible, setModalVisible] = useState(false);
 	const [modalMessage, setModalMessage] = useState('');
 
-	const handleGetAllTaskByUserId = async (userId) => {
+	const isAuthenticated = !!localStorage.getItem('authToken');
+
+
+	useEffect(() => {
+		if(!isAuthenticated) {
+			window.location.href = "/login"
+		}
+	}, []);
+
+
+	const handleGetAllTaskByUserId = async () => {
 		setModalVisible(false);
-
 		try {
-			const updatedTask = await getAllTaskByUserId(userId);
+			const response = await TaskClient.getAllTask();
 
-			if(updatedTask != null) {
-				setTasks(updatedTask);
+			if(response != null) {
+				setTasks(response.data);
 			}
 		} catch (error) {
 			setModalVisible(true);
@@ -28,14 +39,40 @@ export default function TaskComponent() {
 		}
 	};
 
+	const handleDeleteTask = async (id) => {
+		try {
+			const deletedTask = await TaskClient.deleteTask(id);
+
+			console.log(deletedTask)
+			if(deletedTask.status === 200) {
+
+				setModalVisible(true);
+				setModalMessage("Tarea eliminada correctamente");
+				await TaskClient.getAllTask()
+			}
+		} catch (error) {
+			setModalVisible(true);
+			setModalMessage("Hubo un error al eliminar la tarea");
+		}
+	}
+
 	const closeModal = () => {
 		setModalVisible(false);
-		setShow(false);
+		setShowUpdateModal(false);
 	};
 
+	const updateTaskModal = (task) => {
+		setSelectedTask(task);
+		setShowUpdateModal(true);
+	}
+
 	useEffect(() => {
-		handleGetAllTaskByUserId(8);
+		handleGetAllTaskByUserId();
 	}, []);
+
+	const updateTaskInList = (updatedTask) => {
+		setTasks((prevTasks) => prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)));
+	};
 
 	return (
 		<div className="d-flex align-items-center justify-content-center vh-50">
@@ -47,12 +84,23 @@ export default function TaskComponent() {
 							{tasks?.length > 0 ? tasks.map((t, i) => {
 								if(t.status === "PENDING") {
 									return (
-										<li key={i} className="list-group-item d-flex justify-content-between align-items-center">
-											{t.title}
-											<span >
-                                  <button className="btn btn-success btn-sm mx-1">✔</button>
-                                  <button className="btn btn-warning btn-sm mx-1">✏</button>
-                              </span>
+										<li key={i} className="list-group-item task-item d-flex justify-content-between align-items-center">
+											<div className="task-content d-flex align-items-center">
+												<div className="task-title">{t.title}</div>
+												{t.image && (
+													<div className="task-image-container">
+														<img
+															src={`data:image/jpeg;base64,${t.image}`}
+															alt="Task"
+															className="task-image"
+														/>
+													</div>
+												)}
+											</div>
+											<div className="task-actions">
+												<button className="btn btn-danger btn-sm mx-1" onClick={() => handleDeleteTask(t.id)}>X</button>
+												<button className="btn btn-primary btn-sm mx-1" onClick={() => updateTaskModal(t)}>✏</button>
+											</div>
 										</li>
 									)
 								}
@@ -65,12 +113,23 @@ export default function TaskComponent() {
 							{tasks?.length > 0 ? tasks.map((t, i) => {
 								if(t.status === "IN_PROGRESS") {
 									return (
-										<li key={i} className="list-group-item d-flex justify-content-between align-items-center">
-											{t.title}
-											<span >
-                                  <button className="btn btn-success btn-sm mx-1">✔</button>
-                                  <button className="btn btn-warning btn-sm mx-1">✏</button>
-                              </span>
+										<li key={i} className="list-group-item task-item d-flex justify-content-between align-items-center">
+											<div className="task-content d-flex align-items-center">
+												<div className="task-title">{t.title}</div>
+												{t.image && (
+													<div className="task-image-container">
+														<img
+															src={`data:image/jpeg;base64,${t.image}`}
+															alt="Task"
+															className="task-image"
+														/>
+													</div>
+												)}
+											</div>
+											<div className="task-actions">
+												<button className="btn btn-danger btn-sm mx-1" onClick={() => handleDeleteTask(t.id)}>X</button>
+												<button className="btn btn-primary btn-sm mx-1" onClick={() => updateTaskModal(t)}>✏</button>
+											</div>
 										</li>
 									)
 								}
@@ -83,12 +142,23 @@ export default function TaskComponent() {
 							{tasks?.length > 0 ? tasks.map((t, i) => {
 								if(t.status === "DONE") {
 									return (
-										<li key={i} className="list-group-item d-flex justify-content-between align-items-center">
-											{t.title}
-											<span >
-                                  <button className="btn btn-success btn-sm mx-1">✔</button>
-                                  <button className="btn btn-warning btn-sm mx-1" onClick={() => setShow(true)}>✏</button>
-                              </span>
+										<li key={i} className="list-group-item task-item d-flex justify-content-between align-items-center">
+											<div className="task-content d-flex align-items-center">
+												<div className="task-title">{t.title}</div>
+												{t.image && (
+													<div className="task-image-container">
+														<img
+															src={`data:image/jpeg;base64,${t.image}`}
+															alt="Task"
+															className="task-image"
+														/>
+													</div>
+												)}
+											</div>
+											<div className="task-actions">
+												<button className="btn btn-danger btn-sm mx-1" onClick={() => handleDeleteTask(t.id)}>X</button>
+												<button className="btn btn-primary btn-sm mx-1" onClick={() => updateTaskModal(t)}>✏</button>
+											</div>
 										</li>
 									)
 								}
@@ -102,20 +172,29 @@ export default function TaskComponent() {
 				<div className="modal-background">
 					<div className="modal-container">
 						<div className="modal-header">
-							<h3>Error!</h3>
+							<h3>Mensaje</h3>
 							<button className="close-button" onClick={closeModal}>X</button>
 						</div>
 						<div className="modal-body">
 							<p>{modalMessage}</p>
 						</div>
 						<div className="modal-footer">
-							<button className="btn btn-dark" onClick={handleGetAllTaskByUserId}>Reintentar</button>
+							<button className="btn btn-dark" onClick={handleGetAllTaskByUserId}>Aceptar</button>
 						</div>
 					</div>
 				</div>
 			)}
 
-			<UpdateTaskComponent show={show} handleClose={closeModal}></UpdateTaskComponent>
+			{showUpdateModal && (
+				<UpdateTaskComponent
+					show={showUpdateModal}
+					handleClose={closeModal}
+					setModalVisible={setModalVisible}
+					setModalMessage={setModalMessage}
+					task={selectedTask}
+					updateTaskInList={updateTaskInList}
+				/>
+			)}
 
 		</div>
 	)

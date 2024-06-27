@@ -1,23 +1,27 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import { useForm } from 'react-hook-form';
 import InputMask from 'react-input-mask';
 import '../modal/modal-styles.css';
-import { createUser } from "../../client/create-user-client";
 import Wizard from "../wizard/wizard";
+import UserClient from "../../client/user-client";
+import classnames from 'classnames';
 
 export default function SignupFormComponent() {
-    const { register, handleSubmit, watch, formState: { errors } } = useForm();
+    const { register, handleSubmit, watch, formState: { errors } } = useForm({
+        shouldFocusError: true
+    });
     const password = watch('password');
-
+    const username = watch('username');
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
-    const [currentStep, setCurrentStep] = useState(1); // Estado para seguir el paso actual
+    const [currentStep, setCurrentStep] = useState(1);
+    const [usernameExists, setUsernameExists] = useState(false);
 
     const handleCreateUser = async (data) => {
         try {
-            const response = await createUser(data);
+            const response = await UserClient.createUser(data);
 
-            if (response.ok) {
+            if (response.status === 200) {
                 setModalMessage('Registro exitoso');
                 setModalVisible(true);
             } else {
@@ -28,6 +32,12 @@ export default function SignupFormComponent() {
             setModalMessage('Error en la solicitud: ' + error.message);
             setModalVisible(true);
         }
+    };
+
+    const validateUsername = async (username) => {
+        const response = await UserClient.checkIfUserExists(username);
+
+        return response.data;
     };
 
     const closeModal = () => {
@@ -43,7 +53,16 @@ export default function SignupFormComponent() {
     };
 
     const nextStep = () => {
-        setCurrentStep(currentStep + 1);
+        if(currentStep === 1) {
+            validateUsername(username).then(response => {
+                setUsernameExists(response);
+                if (!response) {
+                    setCurrentStep(currentStep + 1);
+                }
+            })
+        } else {
+            setCurrentStep(currentStep + 1);
+        }
     };
 
     const prevStep = () => {
@@ -55,7 +74,7 @@ export default function SignupFormComponent() {
             <div className="mx-auto" style={{ maxWidth: '400px' }}>
                 <div className="text-center mb-5">
                     <h1 className="display-4 mb-4">Registrarse</h1>
-                    <Wizard></Wizard>
+                    <Wizard step={currentStep}></Wizard>
                 </div>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     {currentStep === 1 && (
@@ -64,11 +83,11 @@ export default function SignupFormComponent() {
                                 <label htmlFor="username" className="form-label">Usuario</label>
                                 <input
                                     type="text"
-                                    className={`form-control ${errors.username ? 'is-invalid' : ''}`}
+                                    className={classnames('form-control', { 'is-invalid': usernameExists })}
                                     id="username"
-                                    {...register('username', { required: true, validate: null })}
+                                    {...register('username', { required: true })}
                                 />
-                                {errors.username && <div className="invalid-feedback">El usuario ya existe.</div>}
+                                {usernameExists && <div className="invalid-feedback">El usuario ya existe.</div>}
                             </div>
                             <button type="button" className="btn btn-primary" onClick={nextStep}>Siguiente</button>
                         </div>

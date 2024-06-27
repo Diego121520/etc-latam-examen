@@ -13,4 +13,6 @@ public interface TaskService {
     Boolean updateTask(Long id, UpdateTaskDTO taskDTO);
 
     List<Task> getAllTaskByStatus(Long userId);
+
+    Boolean deleteTask(Long id);
 }

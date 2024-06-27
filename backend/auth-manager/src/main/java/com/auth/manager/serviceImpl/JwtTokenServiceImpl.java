@@ -7,34 +7,19 @@ import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.AllArgsConstructor;
 
-import java.util.Date;
-
 @AllArgsConstructor
 @ApplicationScoped
 public class JwtTokenServiceImpl {
 
-    private static final long expirationTime = 21600000;
+    private static final long EXPIRATION_TIME = 3600;
 
     private final RSAEncryptionUtil rsaEncryptionUtil;
 
-    public String createToken(){
+    public String createToken(Long userId){
         return Jwt.issuer("jwt-token")
-                .subject("3")
-                .expiresAt(System.currentTimeMillis()+3600)
+                .subject(Long.toString(userId))
+                .expiresAt(System.currentTimeMillis() + EXPIRATION_TIME)
                 .sign();
-    }
-
-    public String generateToken(String subject) {
-
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + expirationTime);
-
-        return Jwts.builder()
-                .setSubject(subject)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(rsaEncryptionUtil.getPrivateKey())
-                .compact();
     }
 
     public String getSubjectFromToken(String token) {
@@ -44,15 +29,6 @@ public class JwtTokenServiceImpl {
                 .parseClaimsJws(token)
                 .getBody();
         return claims.getSubject();
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder().setSigningKey(rsaEncryptionUtil.getPrivateKey()).build().parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
 }

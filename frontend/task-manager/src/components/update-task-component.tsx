@@ -1,33 +1,42 @@
-import {useState} from "react";
-import {updateTask} from "../client/taskClient";
-
-export default function UpdateTaskComponent ({ show, handleClose }) {
-	const [task, setTask] = useState({
-		title: "",
-		description: "",
-		status: ""
+import {useEffect, useState} from "react";
+import TaskClient from "../client/task-client";
+export default function UpdateTaskComponent ({ show, handleClose, setModalVisible, setModalMessage, task, updateTaskInList }) {
+	const [newTask, setNewTask] = useState({
+		title: task.title,
+		description: task.description,
+		status: task.status
 	});
+
+	useEffect(() => {
+		setNewTask({
+			title: task.title,
+			description: task.description,
+			status: task.status
+		});
+	}, [task]);
+
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		handleClose();
-		handleUpdateTask();
+		handleUpdateTask(task.id);
 	};
 
-	const handleUpdateTask = async () => {
+	const handleUpdateTask = async (id) => {
 		try {
-			const response = await updateTask(22, task);
+			const response = await TaskClient.updateTask(id, newTask);
 
 			if (response) {
-				// setModalMessage( 'Tarea actualizada exitosamente!');
-				// setModalVisible(true);
+				setModalMessage( 'Tarea actualizada exitosamente!');
+				setModalVisible(true);
+				updateTaskInList(newTask);
 			} else {
-				// setModalMessage('Hubo un error al actualizar la tarea');
-				// setModalVisible(true);
+				setModalMessage('Hubo un error al actualizar la tarea');
+				setModalVisible(true);
 			}
 		} catch (error) {
-			// setModalMessage('Error en la solicitud: ' + error.message);
-			// setModalVisible(true);
+			setModalMessage('Error en la solicitud: ' + error.message);
+			setModalVisible(true);
 		}
 	};
 
@@ -42,7 +51,6 @@ export default function UpdateTaskComponent ({ show, handleClose }) {
 					<div className="modal-header">
 						<h5 className="modal-title">Actualizar Tarea</h5>
 						<button type="button" className="btn-close" aria-label="close" onClick={handleClose}>
-							<span>&times;</span>
 						</button>
 					</div>
 					<div className="modal-body">
@@ -54,8 +62,8 @@ export default function UpdateTaskComponent ({ show, handleClose }) {
 									className="form-control"
 									id="title"
 									placeholder="Ingrese el título"
-									value={task.title}
-									onChange={(e) => setTask({...task, title:e.target.value})}
+									value={newTask.title}
+									onChange={(e) => setNewTask({...newTask, title:e.target.value})}
 								/>
 							</div>
 							<div className="form-group mt-3">
@@ -65,9 +73,22 @@ export default function UpdateTaskComponent ({ show, handleClose }) {
 									className="form-control"
 									id="description"
 									placeholder="Ingrese la descripción"
-									value={task.description}
-									onChange={(e) => setTask({...task, description: e.target.value})}
+									value={newTask.description}
+									onChange={(e) => setNewTask({...newTask, description: e.target.value})}
 								/>
+							</div>
+							<div className="form-group mt-3">
+								<label htmlFor="status">Estado</label>
+								<select
+									className="form-control"
+									id="status"
+									value={newTask.status}
+									onChange={(e) => setNewTask({ ...newTask, status: e.target.value })}
+								>
+									<option value="PENDING">Pendiente</option>
+									<option value="IN_PROGRESS">En progreso</option>
+									<option value="DONE">Terminada</option>
+								</select>
 							</div>
 							<div className="text-center">
 								<button type="submit" className="btn btn-primary mt-3">

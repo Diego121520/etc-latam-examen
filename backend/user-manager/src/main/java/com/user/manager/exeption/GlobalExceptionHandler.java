@@ -2,6 +2,7 @@ package com.user.manager.exeption;
 
 import com.user.manager.DTO.ExceptionResponseDTO;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
@@ -16,8 +17,12 @@ public class GlobalExceptionHandler implements ExceptionMapper<Exception> {
             return this.handleUserException((GenericException) e);
         }
 
+        if(e instanceof WebApplicationException) {
+            return this.handleWebApplicationException((WebApplicationException) e);
+        }
+
         return Response.status(Response.Status.NOT_FOUND)
-                .entity(new ExceptionResponseDTO(HttpResponseStatus.BAD_GATEWAY.code(), "Error generico"))
+                .entity(new ExceptionResponseDTO(HttpResponseStatus.BAD_GATEWAY.code(), "Error generico: " + e))
                 .build();
     }
 
@@ -25,5 +30,11 @@ public class GlobalExceptionHandler implements ExceptionMapper<Exception> {
         return Response
                 .status(e.getHttpStatus())
                 .entity(new ExceptionResponseDTO(e.getHttpStatus().getStatusCode(), e.getMessage())).build();
+    }
+
+    private Response handleWebApplicationException(WebApplicationException e) {
+        return Response
+                .status(e.getResponse().getStatus())
+                .entity(new ExceptionResponseDTO(e.getResponse().getStatus(), e.getMessage())).build();
     }
 }

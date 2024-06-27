@@ -5,14 +5,13 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
-public class UserClient {
+public class AuthClient {
 
     @Inject
     @RestClient
-    UserRestClient userRestClient;
+    AuthRestClient authRestClient;
 
-    public Boolean isValidUser(Long userId) {
-       return userRestClient.isValidUser(userId, "internal");
+    public void validateCredentials(String authToken, String csrfToken) {
+        authRestClient.validateCredentials(authToken, csrfToken);
     }
-
 }

@@ -63,7 +63,7 @@
     "react-hook-form": "^7.52.0",
     "react-input-mask": "^2.0.4",
     "react-modal": "^3.16.1",
-    "react-router-dom": "^6.23.1",
+    "react-router-dom": "^6.24.0",
     "react-slick": "^0.30.2",
     "single-spa": "^5.9.3",
     "single-spa-react": "^4.3.1",

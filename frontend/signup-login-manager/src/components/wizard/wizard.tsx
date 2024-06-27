@@ -7,7 +7,7 @@ import StepOne from './StepOne';
 import StepTwo from './StepTwo';
 import StepThree from './StepThree';
 
-const Wizard = () => {
+const Wizard = ({step}) => {
     const settings = {
         dots: true,
         infinite: false,
@@ -20,15 +20,21 @@ const Wizard = () => {
     return (
         <div className="wizard-container">
             <Slider {...settings}>
-                <div>
-                    <StepOne />
-                </div>
-                <div>
-                    <StepTwo />
-                </div>
-                <div>
-                    <StepThree />
-                </div>
+
+                {step === 1 ? (
+                    <div>
+                        <StepOne />
+                    </div>
+                ) : step === 2 ? (
+                    <div>
+                        <StepTwo />
+                    </div>
+                ) : (
+                    <div>
+                        <StepThree />
+                    </div>
+                )}
+
             </Slider>
         </div>
     );

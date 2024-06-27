@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import image from '../../images/etc-latam-logo.png';
+import AuthClient from '../../client/auth-client';
 export default function LoginComponent(props) {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [data, setData] = useState({
+        username: "",
+        password: ""
+    });
 
     const [modalVisible, setModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
@@ -12,16 +14,7 @@ export default function LoginComponent(props) {
         event.preventDefault();
 
         try {
-            const response = await axios.post('http://localhost:8092/api/login', {
-                username,
-                password,
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            console.log(response)
+            const response = await AuthClient.login(data);
 
             if (response) {
                 setModalMessage( 'Inicio de sesión exitoso!');
@@ -40,12 +33,14 @@ export default function LoginComponent(props) {
         setModalVisible(false);
     };
 
-
+    const redirect = () => {
+        window.location.href = "/task-manager"
+    }
     return (
         <div className="d-flex align-items-center justify-content-center vh-100">
             <div className="mx-auto" style={{ maxWidth: '400px' }}>
                 <div className="text-center mb-4">
-                    <img className="mb-2" src={image}/>
+                    {/*<img className="mb-2" src={image}/>*/}
                     <h1 className="display-4">Iniciar sesión</h1>
                 </div>
                 <form onSubmit={handleSubmit}>
@@ -56,8 +51,8 @@ export default function LoginComponent(props) {
                             className="form-control"
                             id="username"
                             placeholder="Ingresa tu usuario"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            value={data.username}
+                            onChange={(e) => setData({...data, username:e.target.value})}
                             required
                         />
                     </div>
@@ -67,8 +62,8 @@ export default function LoginComponent(props) {
                             type="password"
                             className="form-control"
                             id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            value={data.password}
+                            onChange={(e) => setData({...data, password:e.target.value})}
                             required
                         />
                     </div>
@@ -81,14 +76,14 @@ export default function LoginComponent(props) {
                 <div className="modal-background">
                     <div className="modal-container">
                         <div className="modal-header">
-                            <h3>Error!</h3>
+                            <h3>Mensaje</h3>
                             <button className="close-button" onClick={closeModal}>X</button>
                         </div>
                         <div className="modal-body">
                             <p>{modalMessage}</p>
                         </div>
                         <div className="modal-footer">
-                            <button className="btn btn-success" >Continuar</button>
+                            <button className="btn btn-success" onClick={redirect}>Continuar</button>
                         </div>
                     </div>
                 </div>

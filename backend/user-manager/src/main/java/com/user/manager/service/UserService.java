@@ -6,7 +6,7 @@ import com.user.manager.entity.User;
 
 public interface UserService {
 
-    void createUser(UserDTO userDTO) throws Exception;
+    void createUser(UserDTO userDTO);
 
     Boolean existUserById(Long userId);
 

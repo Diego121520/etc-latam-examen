@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { createTask } from '../client/taskClient';
 import AvatarEditor from 'react-avatar-editor';
 import '../styles/task-styles.css';
+import TaskClient from "../client/task-client";
 
 export default function CreateTaskComponent() {
 	const [modalVisible, setModalVisible] = useState(false);
@@ -10,6 +10,8 @@ export default function CreateTaskComponent() {
 	const [editor, setEditor] = useState(null); // Referencia al editor de imagen
 	const [croppedImage, setCroppedImage] = useState(null); // Estado para la imagen recortada
 
+	const userId = localStorage.getItem("userId");
+
 	const handleCreateTask = async (event) => {
 		event.preventDefault();
 
@@ -17,14 +19,18 @@ export default function CreateTaskComponent() {
 		formData.append('title', event.target.title.value);
 		formData.append('description', event.target.description.value);
 		formData.append('status', 'PENDING');
-		formData.append('userId', "8");
-		formData.append('image', croppedImage);
+		formData.append('userId', userId);
+
+		if (croppedImage) {
+			formData.append("image", croppedImage.replace(/^data:image\/[a-z]+;base64,/, ''))
+		}
 
 		try {
-			const response = await createTask(formData);
+			const response = await TaskClient.createTask(formData);
 
-			if (response.ok) {
+			if (response) {
 				setModalMessage('Tarea creada exitosamente!');
+				await TaskClient.getAllTask();
 			} else {
 				setModalMessage('Hubo un error al crear la tarea');
 			}
@@ -62,12 +68,12 @@ export default function CreateTaskComponent() {
 
 	const closeModal = () => {
 		setModalVisible(false);
-		setImage(false);
+		// setImage(false);
 	};
 
 	return (
 		<div className="d-flex justify-content-center vh-60">
-			<div className="container" style={{ maxWidth: '600px' }}>
+			<div className="container mt-4" style={{ maxWidth: '600px' }}>
 				<div className="text-center my-5">
 					<h1 className="display-4">Administrador de tareas</h1>
 				</div>
@@ -147,5 +153,6 @@ export default function CreateTaskComponent() {
 				</div>
 			)}
 		</div>
+
 	);
 }
